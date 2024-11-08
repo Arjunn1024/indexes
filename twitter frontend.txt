@@ -1,0 +1,198 @@
+import React, { useState } from 'react';
+import './App.css';
+
+function App() {
+  const [posts, setPosts] = useState([]);
+  const [newPost, setNewPost] = useState("");
+  const [username, setUsername] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+  const [isSignup, setIsSignup] = useState(false); // Track if user is on signup form
+
+  const [loginUsername, setLoginUsername] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  const [signupUsername, setSignupUsername] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+
+  const handleCreatePost = () => {
+    if (newPost) {
+      setPosts([{ id: posts.length + 1, content: newPost, author: username, repost: false }, ...posts]);
+      setNewPost(""); // Clear the input
+    }
+  };
+
+  const handleRepost = (post) => {
+    setPosts([{ ...post, id: posts.length + 1, repost: true }, ...posts]);
+  };
+
+  const handleLogin = () => {
+    if (loginUsername && loginPassword) {
+      setUsername(loginUsername);
+      setIsLoggedIn(true);
+    }
+  };
+
+  const handleSignup = () => {
+    if (signupUsername && signupPassword) {
+      setUsername(signupUsername);
+      setIsLoggedIn(true);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUsername("");
+  };
+
+  return (
+    <div id="app">
+      <header className="header">
+        <h1>Twitter-Like Platform</h1>
+      </header>
+
+      <div className="content">
+        {!isLoggedIn ? (
+          <div className="auth-section">
+            <h2>{isSignup ? "Sign Up" : "Login"}</h2>
+            {isSignup ? (
+              <div className="form">
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={signupUsername}
+                  onChange={(e) => setSignupUsername(e.target.value)}
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={signupPassword}
+                  onChange={(e) => setSignupPassword(e.target.value)}
+                />
+                <button onClick={handleSignup}>Sign Up</button>
+                <p>
+                  Already have an account? <button onClick={() => setIsSignup(false)}>Login</button>
+                </p>
+              </div>
+            ) : (
+              <div className="form">
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={loginUsername}
+                  onChange={(e) => setLoginUsername(e.target.value)}
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                />
+                <button onClick={handleLogin}>Login</button>
+                <p>
+                  Don't have an account? <button onClick={() => setIsSignup(true)}>Sign Up</button>
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="logged-in-section">
+            <div className="create-post">
+              <textarea
+                placeholder="What's on your mind?"
+                value={newPost}
+                onChange={(e) => setNewPost(e.target.value)}
+              />
+              <button onClick={handleCreatePost}>Post</button>
+            </div>
+
+            <div className="feed">
+              <h2>Home Feed</h2>
+              {posts.map((post) => (
+                <div key={post.id} className="post">
+                  <p>
+                    <strong>{post.repost ? `${post.author} reposted` : post.author}</strong>
+                  </p>
+                  <p>{post.content}</p>
+                  <div className="actions">
+                    <button onClick={() => handleRepost(post)}>Repost</button>
+                    <button>Share</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={handleLogout}>Logout</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
+
+css styling
+
+#app {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  width: 100%;
+  padding: 20px;
+  background-color: #1da1f2;
+  color: white;
+  text-align: center;
+}
+
+.content {
+  width: 60%;
+  margin-top: 20px;
+}
+
+.create-post {
+  margin-bottom: 20px;
+}
+
+.create-post textarea {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: none;
+}
+
+button {
+  padding: 10px;
+  background-color: #1da1f2;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #007bb5;
+}
+
+.feed {
+  width: 100%;
+}
+
+.post {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
